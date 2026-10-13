@@ -260,5 +260,44 @@
         render();                                // 首次渲染，把 localStorage 里的数据画出来
     })();
     </script>
+
+        <!-- 截图辅助：仅在 URL 带 ?demo=1 时生效，给截图准备示例数据；正常打开页面不受影响。 -->
+    <script>
+    (function () {
+        'use strict';
+        if (location.search.indexOf('demo=') === -1) { return; }
+        if (localStorage.getItem('todos') === null) {
+            localStorage.setItem('todos', JSON.stringify([
+                { id: 'demo-1', text: '完成 V2.0 数据驱动重构', completed: true },
+                { id: 'demo-2', text: '补完筛选与 localStorage 持久化', completed: false },
+                { id: 'demo-3', text: '刷新页面确认数据还在', completed: false }
+            ]));
+            location.reload();
+            return;
+        }
+        if (location.search.indexOf('measure=') !== -1) {
+            var box = function (sel) {
+                var el = document.querySelector(sel);
+                if (!el) { return null; }
+                var r = el.getBoundingClientRect();
+                return [Math.round(r.top), Math.round(r.bottom)];
+            };
+            document.title = 'GEO:' + JSON.stringify({
+                header: box('.profile'),
+                todo: box('.todo-section'),
+                footer: box('footer'),
+                bodyHeight: document.body.scrollHeight,
+                viewport: [window.innerWidth, window.innerHeight],
+                items: document.querySelectorAll('.todo-list li').length
+            });
+        }
+        // &filter=active|done：截图前切到某个筛选，展示筛选结果
+        var fm = /[?&]filter=(active|done|all)/.exec(location.search);
+        if (fm) {
+            var btn = document.querySelector('.todo-filter[data-filter="' + fm[1] + '"]');
+            if (btn) { btn.click(); }
+        }
+    })();
+    </script>
 </body>
 </html>

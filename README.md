@@ -60,6 +60,30 @@ python -m http.server 8000
 4. 控制台执行 `localStorage.getItem('todos')` 检查落盘数据；
 5. 控制台调用 `clearCompleted()` 验证「删除所有已完成任务」。
 
+## 界面截图
+
+真实浏览器（Edge 无头模式）渲染结果；示例数据通过 `index.html?demo=1` 注入，正常打开页面不受影响。
+
+**桌面宽屏（1000px）整页**
+
+![桌面宽屏整页](docs/images/01-desktop-full.png)
+
+**Todo 区块特写 —— 已完成项带删除线，底部实时统计**
+
+![Todo 区块特写](docs/images/02-desktop-todo.png)
+
+**筛选「未完成」/「已完成」**
+
+| 未完成 | 已完成 |
+| --- | --- |
+| ![筛选未完成](docs/images/03-desktop-filter-active.png) | ![筛选已完成](docs/images/04-desktop-filter-done.png) |
+
+**窄屏（约 490px 视口）**
+
+| Todo 区块 | 整页 |
+| --- | --- |
+| ![窄屏 Todo](docs/images/05-narrow-todo.png) | ![窄屏整页](docs/images/06-narrow-full.png) |
+
 ## Git 工作流
 
 课程要求「分支开发 → 多次提交 → 合并回 main」，提交信息按 `feat:` / `refactor:` / `docs:` 前缀组织：
