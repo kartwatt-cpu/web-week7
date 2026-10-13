@@ -47,6 +47,11 @@
 
                 <ul class="todo-list" aria-label="待办列表" aria-live="polite"></ul>
 
+                <!-- 环节④：计数与清除已完成（提交 3 加入持久化后一并补上） -->
+                <div class="todo-footer">
+                    <p class="todo-count">共 0 项 · 未完成 0 项</p>
+                    <button type="button" class="todo-clear">清除已完成</button>
+                </div>
             </section>
 
             <section>
@@ -106,24 +111,56 @@
     (function () {
         'use strict';
 
+        var KEY = 'todos';                       // ① 存储的键名
         var input = document.querySelector('.todo-input');
         var addBtn = document.querySelector('.todo-add');
         var list = document.querySelector('.todo-list');
         var hint = document.querySelector('.todo-hint');
         var countEl = document.querySelector('.todo-count');
+        var clearBtn = document.querySelector('.todo-clear');
         var filterBtns = document.querySelectorAll('.todo-filter');
 
-        var todos = [];                          // ③ 单一数据源
+        var todos = load();                      // ③ 单一数据源
         var filter = 'all';                      // ④ 视图状态
 
-        // ⑦ 改数据 → 重渲染
+        // ⑤ 存
+        function save() {
+            try {
+                localStorage.setItem(KEY, JSON.stringify(todos));
+            } catch (err) {
+                hint.textContent = '保存失败：' + err.message;
+            }
+        }
+
+        // ⑤ 取
+        function load() {
+            var raw;
+            try {
+                raw = localStorage.getItem(KEY);
+            } catch (err) {
+                return [];
+            }
+            if (raw === null) {
+                return [];                       // 没存过 → 空数组
+            }
+            try {
+                var data = JSON.parse(raw);
+                return Array.isArray(data) ? data : [];
+            } catch (err) {
+                return [];                       // 内容被改坏 → 退回空数组，不让整页脚本挂掉
+            }
+        }
+
+        // ⑦ 改数据 → 保存 → 重渲染
         function addTodo(text) {
             todos = todos.concat([{ id: nextId(), text: text, completed: false }]);
+            save();
             render();
         }
 
         function removeTodo(id) {
             todos = todos.filter(function (t) { return t.id !== id; });
+            save();
             render();
         }
 
@@ -131,12 +168,13 @@
             todos = todos.map(function (t) {
                 return t.id === id ? Object.assign({}, t, { completed: !t.completed }) : t;
             });
+            save();
             render();
         }
 
         function setFilter(f) {
             filter = f;
-            render();                            // 视图状态 → 只重渲染
+            render();                            // 视图状态 → 只重渲染，不需要 save()
         }
 
         function render() {
@@ -210,7 +248,16 @@
             btn.addEventListener('click', function () { setFilter(btn.dataset.filter); });
         });
 
-        render();                                // 首次渲染
+        clearBtn.addEventListener('click', function () { clearCompleted(); });
+
+        // 记录 3：脱离 AI 小改，手写完成 —— 删除所有已完成任务
+        function clearCompleted() {
+            todos = todos.filter(function (t) { return !t.completed; });
+            save();
+            render();
+        }
+
+        render();                                // 首次渲染，把 localStorage 里的数据画出来
     })();
     </script>
 </body>
