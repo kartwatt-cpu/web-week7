@@ -64,6 +64,9 @@ python -m http.server 8000
 
 真实浏览器（Edge 无头模式）渲染结果；示例数据通过 `index.html?demo=1` 注入，正常打开页面不受影响。
 
+> 其中 4 张已作为插图放进 AI 协作日志（图 1 桌面整页、图 2 待办区块特写、图 3 筛选未完成、图 4 窄屏），
+> 排版预览见 `docs/AI协作日志W7-预览.pdf`。
+
 **桌面宽屏（1000px）整页**
 
 ![桌面宽屏整页](docs/images/01-desktop-full.png)
