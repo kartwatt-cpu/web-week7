@@ -2,3 +2,6 @@
 _release/
 _tools/
 量规txt
+
+# Office 打开文档时产生的临时锁文件
+~$*
