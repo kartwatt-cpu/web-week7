@@ -30,7 +30,9 @@
 1. 不许就地修改：不用 `push` / `splice` / 直接改对象属性，改用 `concat` / `filter` / `map` + `Object.assign`。
 2. 每个操作函数结尾固定 `save(); render();`，不要只做其中一步。
 3. 功能函数里禁止出现 `createElement` / `appendChild` / `innerHTML` / `removeChild`，DOM 操作集中在 `render()`。
-4. 新代码用 `const` / `let`；循环里创建并绑定事件时不要用 `var`（闭包会共享同一个变量）。
+4. 代码风格沿用第 5/6 周的 ES5 写法（`var` + `function`），不引入构建工具；
+   但循环里创建元素并绑定事件时不要用 `var` 声明循环变量（闭包会共享同一个变量），
+   改用 `forEach` 或 `let`。
 5. 边界要设防：空输入、`id` 撞号、`localStorage` 读写异常都要处理，坏数据不能让整页脚本挂掉。
 6. 只改必要的地方，保持既有主题色（`#3b82f6` / `#1d4ed8`）与可访问性属性。
 
