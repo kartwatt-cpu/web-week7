@@ -38,6 +38,13 @@
 
                 <p class="todo-hint" role="status" aria-live="polite"></p>
 
+                <!-- 环节④：筛选按钮（提交 2 加入） -->
+                <div class="todo-filters" role="group" aria-label="筛选待办事项">
+                    <button type="button" class="todo-filter is-active" data-filter="all" aria-pressed="true">全部</button>
+                    <button type="button" class="todo-filter" data-filter="active" aria-pressed="false">未完成</button>
+                    <button type="button" class="todo-filter" data-filter="done" aria-pressed="false">已完成</button>
+                </div>
+
                 <ul class="todo-list" aria-label="待办列表" aria-live="polite"></ul>
 
             </section>
@@ -103,8 +110,11 @@
         var addBtn = document.querySelector('.todo-add');
         var list = document.querySelector('.todo-list');
         var hint = document.querySelector('.todo-hint');
+        var countEl = document.querySelector('.todo-count');
+        var filterBtns = document.querySelectorAll('.todo-filter');
 
         var todos = [];                          // ③ 单一数据源
+        var filter = 'all';                      // ④ 视图状态
 
         // ⑦ 改数据 → 重渲染
         function addTodo(text) {
@@ -124,9 +134,20 @@
             render();
         }
 
+        function setFilter(f) {
+            filter = f;
+            render();                            // 视图状态 → 只重渲染
+        }
+
         function render() {
             list.innerHTML = '';                 // 清空 → 重画
-            todos.forEach(function (t) {
+            var shown = todos.filter(function (t) {
+                if (filter === 'all') { return true; }
+                if (filter === 'done') { return t.completed; }
+                return !t.completed;
+            });
+
+            shown.forEach(function (t) {
                 var li = document.createElement('li');
                 li.textContent = t.text;
                 li.dataset.id = t.id;
@@ -147,6 +168,10 @@
                 li.appendChild(delBtn);
                 list.appendChild(li);
             });
+
+            updateFilterButtons();
+            countEl.textContent = '共 ' + todos.length + ' 项 · 未完成 ' +
+                todos.reduce(function (n, t) { return n + (t.completed ? 0 : 1); }, 0) + ' 项';
         }
 
         // 唯一 id：同一毫秒内连续添加也不会撞号
@@ -154,6 +179,14 @@
 
         function nextId() {
             return Date.now().toString(36) + '-' + (seq++).toString(36);
+        }
+
+        function updateFilterButtons() {
+            filterBtns.forEach(function (btn) {
+                var on = btn.dataset.filter === filter;
+                btn.classList.toggle('is-active', on);
+                btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
         }
 
         addBtn.addEventListener('click', function () {
@@ -171,6 +204,10 @@
 
         input.addEventListener('keydown', function (e) {
             if (e.key === 'Enter') { addBtn.click(); }
+        });
+
+        filterBtns.forEach(function (btn) {
+            btn.addEventListener('click', function () { setFilter(btn.dataset.filter); });
         });
 
         render();                                // 首次渲染
